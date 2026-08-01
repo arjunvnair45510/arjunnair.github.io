@@ -1,12 +1,598 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Website</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vivek — Frequency-Domain Research</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  :root{
+    --bg: #0A1118;
+    --panel: #111B27;
+    --panel-2: #0D1621;
+    --border: #223245;
+    --trace: #6EE7C4;
+    --trace-dim: #3B7D6D;
+    --amber: #F2A65A;
+    --text: #E7EEF3;
+    --muted: #8CA0B3;
+    --muted-2: #5D7285;
+  }
+
+  *{ box-sizing: border-box; }
+  html{ scroll-behavior: smooth; }
+
+  body{
+    margin:0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3, .display{
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+
+  .mono{
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  a{ color: inherit; }
+
+  ::selection{ background: var(--trace); color: #04130F; }
+
+  :focus-visible{
+    outline: 2px solid var(--trace);
+    outline-offset: 3px;
+  }
+
+  .wrap{
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 0 28px;
+  }
+
+  /* NAV */
+  nav{
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    backdrop-filter: blur(10px);
+    background: rgba(10,17,24,0.82);
+    border-bottom: 1px solid var(--border);
+  }
+  nav .wrap{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    height: 64px;
+  }
+  .brand{
+    font-family:'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 1.05rem;
+    display:flex;
+    align-items:center;
+    gap: 8px;
+  }
+  .brand .dot{
+    width:8px; height:8px; border-radius:50%;
+    background: var(--trace);
+    box-shadow: 0 0 8px 1px var(--trace);
+  }
+  .navlinks{
+    display:flex;
+    gap: 28px;
+    font-size: 0.88rem;
+    color: var(--muted);
+  }
+  .navlinks a{ text-decoration:none; transition: color .15s ease; }
+  .navlinks a:hover{ color: var(--text); }
+
+  /* HERO */
+  .hero{
+    padding: 92px 0 56px;
+    border-bottom: 1px solid var(--border);
+  }
+  .eyebrow{
+    font-family:'JetBrains Mono', monospace;
+    font-size: 0.76rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--trace);
+    margin: 0 0 18px;
+  }
+  .hero h1{
+    font-size: clamp(2.1rem, 5vw, 3.4rem);
+    line-height: 1.08;
+    margin: 0 0 20px;
+    max-width: 15ch;
+  }
+  .hero h1 em{
+    font-style: normal;
+    color: var(--trace);
+  }
+  .hero p.lede{
+    color: var(--muted);
+    font-size: 1.05rem;
+    max-width: 54ch;
+    margin: 0 0 36px;
+  }
+
+  .hero-grid{
+    display:grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 48px;
+    align-items:center;
+  }
+  @media (max-width: 860px){
+    .hero-grid{ grid-template-columns: 1fr; }
+  }
+
+  .scope{
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 18px 14px;
+  }
+  .scope-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom: 10px;
+    font-family:'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--muted-2);
+  }
+  .scope-head .live{
+    color: var(--trace);
+  }
+  canvas{
+    display:block;
+    width: 100%;
+    height: 220px;
+    border-radius: 6px;
+  }
+  .scope-legend{
+    display:flex;
+    gap: 18px;
+    margin-top: 12px;
+    font-family:'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--muted);
+    flex-wrap: wrap;
+  }
+  .scope-legend span{ display:flex; align-items:center; gap:6px; }
+  .swatch{ width:10px; height:10px; border-radius:2px; display:inline-block; }
+
+  .cta-row{
+    display:flex;
+    gap: 14px;
+    margin-top: 8px;
+    flex-wrap: wrap;
+  }
+  .btn{
+    display:inline-flex;
+    align-items:center;
+    gap: 8px;
+    padding: 11px 18px;
+    border-radius: 7px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-decoration:none;
+    border: 1px solid var(--border);
+    transition: all .15s ease;
+  }
+  .btn.primary{
+    background: var(--trace);
+    color: #04130F;
+    border-color: var(--trace);
+  }
+  .btn.primary:hover{ filter: brightness(1.08); }
+  .btn.ghost{ color: var(--text); }
+  .btn.ghost:hover{ border-color: var(--trace); color: var(--trace); }
+
+  /* SECTION SHARED */
+  section{ padding: 72px 0; border-bottom: 1px solid var(--border); }
+  .section-head{ margin-bottom: 40px; max-width: 60ch; }
+  .section-head h2{ font-size: 1.7rem; margin: 6px 0 12px; }
+  .section-head p{ color: var(--muted); font-size: 0.98rem; }
+
+  /* ABOUT */
+  .about-grid{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+  }
+  @media (max-width: 860px){ .about-grid{ grid-template-columns: 1fr; } }
+  .about-grid p{ color: var(--muted); margin-bottom: 14px; }
+  .about-grid p strong{ color: var(--text); font-weight: 500; }
+
+  .facts{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+  }
+  .fact{
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 18px;
+  }
+  .fact .k{
+    font-family:'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--muted-2);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 6px;
+  }
+  .fact .v{ font-size: 0.95rem; }
+
+  /* RESEARCH CARDS */
+  .cards{
+    display:grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+  @media (max-width: 760px){ .cards{ grid-template-columns: 1fr; } }
+
+  .card{
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 24px;
+    transition: border-color .15s ease, transform .15s ease;
+  }
+  .card:hover{
+    border-color: var(--trace-dim);
+    transform: translateY(-2px);
+  }
+  .tag{
+    display:inline-block;
+    font-family:'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    color: var(--amber);
+    border: 1px solid rgba(242,166,90,0.35);
+    padding: 3px 9px;
+    border-radius: 4px;
+    margin-bottom: 14px;
+  }
+  .card h3{ font-size: 1.15rem; margin: 0 0 10px; }
+  .card p{ color: var(--muted); font-size: 0.92rem; margin: 0 0 16px; }
+  .card .meta{
+    display:flex;
+    justify-content: space-between;
+    align-items:center;
+    font-family:'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--muted-2);
+    border-top: 1px dashed var(--border);
+    padding-top: 14px;
+  }
+  .status{
+    display:flex; align-items:center; gap:6px;
+  }
+  .status .pip{ width:6px; height:6px; border-radius:50%; }
+  .pip.done{ background: var(--trace); }
+  .pip.wip{ background: var(--amber); }
+
+  /* THROUGHLINE */
+  .through{
+    position: relative;
+    padding: 8px 0 0;
+  }
+  .through-line{
+    position: relative;
+    height: 2px;
+    background: linear-gradient(90deg, var(--trace-dim), var(--trace), var(--amber));
+    margin: 50px 0 46px;
+    border-radius: 2px;
+  }
+  .through-nodes{
+    display:grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+  @media (max-width: 760px){ .through-nodes{ grid-template-columns: 1fr 1fr; } }
+  .node{ position:relative; }
+  .node::before{
+    content:'';
+    position:absolute;
+    top: -58px;
+    left: 0;
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    background: var(--bg);
+    border: 2px solid var(--trace);
+  }
+  .node .domain{
+    font-family:'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--trace);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .node h4{ margin: 0 0 6px; font-size: 0.98rem; font-family:'Space Grotesk',sans-serif; font-weight: 600; }
+  .node p{ margin:0; color: var(--muted); font-size: 0.85rem; }
+
+  /* FOOTER */
+  footer{ padding: 48px 0 64px; }
+  footer .wrap{
+    display:flex;
+    justify-content: space-between;
+    align-items:flex-end;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+  footer .links{ display:flex; gap: 22px; }
+  footer .links a{
+    text-decoration:none;
+    font-size: 0.9rem;
+    color: var(--muted);
+    border-bottom: 1px solid transparent;
+    transition: color .15s ease, border-color .15s ease;
+  }
+  footer .links a:hover{ color: var(--trace); border-color: var(--trace); }
+  footer .sig{ font-family:'JetBrains Mono', monospace; font-size: 0.72rem; color: var(--muted-2); }
+
+  @media (prefers-reduced-motion: reduce){
+    html{ scroll-behavior: auto; }
+  }
+</style>
 </head>
 <body>
-    <h1>Hello, World!</h1>
-    <p>Welcome to my website hosted on GitHub Pages.</p>
+
+<nav>
+  <div class="wrap">
+    <div class="brand"><span class="dot"></span>Vivek</div>
+    <div class="navlinks">
+      <a href="#research">Research</a>
+      <a href="#about">About</a>
+      <a href="#throughline">Throughline</a>
+      <a href="#contact">Contact</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <p class="eyebrow">// frequency-domain analysis</p>
+      <h1>One wave equation.<br><em>Four different signals.</em></h1>
+      <p class="lede">I study how the same Fourier transform reveals hidden structure in sound, images, audio, and ground motion — from a guitar body to a scanned document to a seismic sensor.</p>
+      <div class="cta-row">
+        <a class="btn primary" href="#research">View research →</a>
+        <a class="btn ghost" href="#contact">Get in touch</a>
+      </div>
+    </div>
+
+    <div class="scope">
+      <div class="scope-head">
+        <span>FOURIER SYNTHESIS — LIVE</span>
+        <span class="live">● RUNNING</span>
+      </div>
+      <canvas id="scopeCanvas"></canvas>
+      <div class="scope-legend">
+        <span><span class="swatch" style="background:#3B7D6D"></span>fundamental</span>
+        <span><span class="swatch" style="background:#6EE7C4"></span>+ harmonics</span>
+        <span><span class="swatch" style="background:#F2A65A"></span>summed signal</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section id="about">
+  <div class="wrap">
+    <div class="about-grid">
+      <div>
+        <p class="eyebrow">About</p>
+        <h2>Physics, math, and the math that connects them</h2>
+        <p>I'm a rising junior at Redmond High School focused on physics, mathematics, and signal processing. My work traces one idea — that decomposing a signal into its frequency components reveals what a raw time-series can't — across acoustics, computer vision, audio forensics, and seismology.</p>
+        <p>This started with a question about my own <strong>electric guitar build</strong>: why does it resonate the way it does? That question turned into a research throughline connecting a Celusion Technologies internship, independent research, and a RISE Research mentorship.</p>
+      </div>
+      <div class="facts">
+        <div class="fact"><div class="k">School</div><div class="v">Redmond High School — Class of 2028</div></div>
+        <div class="fact"><div class="k">Focus</div><div class="v">Physics · Math · Signal Processing</div></div>
+        <div class="fact"><div class="k">Internship</div><div class="v">Celusion Technologies</div></div>
+        <div class="fact"><div class="k">Research</div><div class="v">RISE Research Mentorship</div></div>
+        <div class="fact"><div class="k">Leadership</div><div class="v">Physics Club, PR Vice President</div></div>
+        <div class="fact"><div class="k">Toolkit</div><div class="v">Python · NumPy/SciPy · OpenCV · librosa</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="research">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">Research</p>
+      <h2>Projects, by signal domain</h2>
+      <p>Each project applies the same core method — FFT / spectral analysis — to a different physical signal.</p>
+    </div>
+
+    <div class="cards">
+      <div class="card">
+        <span class="tag">OPTICAL — IMAGE</span>
+        <h3>Document Tamper Detection via 2D FFT</h3>
+        <p>Detecting spatial-frequency artifacts left behind by copy-paste and re-compression tampering in scanned ID documents, built during a fraud-detection internship at Celusion Technologies.</p>
+        <div class="meta">
+          <span class="status"><span class="pip wip"></span>In progress</span>
+          <span>Python · NumPy · OpenCV</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <span class="tag">ACOUSTIC — VOICE</span>
+        <h3>Spectral Features for Audio Deepfake Detection</h3>
+        <p>Investigating which interpretable frequency-domain features best distinguish synthetic from genuine speech, using the ASVspoof dataset — an alternative to black-box detection models.</p>
+        <div class="meta">
+          <span class="status"><span class="pip wip"></span>In progress</span>
+          <span>Python · librosa · scikit-learn</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <span class="tag">MECHANICAL — VIBRATION</span>
+        <h3>Guitar Resonance &amp; Fourier Analysis</h3>
+        <p>Measuring the resonant frequencies of a hand-built electric guitar using phone accelerometer and microphone data, comparing measured harmonics against theoretical string physics.</p>
+        <div class="meta">
+          <span class="status"><span class="pip done"></span>Complete</span>
+          <span>Python · NumPy · SciPy FFT</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <span class="tag">SEISMIC — GROUND MOTION</span>
+        <h3>Low-Cost Seismic Precursor Detection</h3>
+        <p>A RISE Research project testing whether frequency-domain signatures in low-cost accelerometer data can flag slope-instability precursors — motivated by the 2014 Oso landslide in Washington State.</p>
+        <div class="meta">
+          <span class="status"><span class="pip wip"></span>RISE Research</span>
+          <span>Arduino · Python · FFT</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="throughline">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">The throughline</p>
+      <h2>Same lens, rising stakes</h2>
+      <p>Each project reapplies the same frequency-domain method to a signal with higher real-world consequence than the last.</p>
+    </div>
+
+    <div class="through">
+      <div class="through-nodes">
+        <div class="node">
+          <div class="domain">Sound</div>
+          <h4>Guitar acoustics</h4>
+          <p>Where the question started — personal curiosity.</p>
+        </div>
+        <div class="node">
+          <div class="domain">Image</div>
+          <h4>Document forensics</h4>
+          <p>Applied to fraud &amp; security at Celusion.</p>
+        </div>
+        <div class="node">
+          <div class="domain">Voice</div>
+          <h4>Deepfake detection</h4>
+          <p>Applied to AI-driven fraud, independently.</p>
+        </div>
+        <div class="node">
+          <div class="domain">Ground</div>
+          <h4>Seismic precursors</h4>
+          <p>Applied to public safety, with RISE.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer id="contact">
+  <div class="wrap">
+    <div>
+      <p class="eyebrow" style="margin-bottom:8px;">Contact</p>
+      <div class="links">
+        <a href="https://github.com/" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://linkedin.com/" target="_blank" rel="noopener">LinkedIn</a>
+        <a href="mailto:youremail@example.com">Email</a>
+      </div>
+    </div>
+    <div class="sig mono">f(t) = Σ aₙ·sin(2πnft + φₙ)</div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  const canvas = document.getElementById('scopeCanvas');
+  const ctx = canvas.getContext('2d');
+  let w, h, dpr;
+
+  function resize(){
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const rect = canvas.getBoundingClientRect();
+    w = rect.width; h = rect.height;
+    canvas.width = w * dpr;
+    canvas.height = h * dpr;
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let t = 0;
+
+  // subtle grid
+  function drawGrid(){
+    ctx.strokeStyle = 'rgba(140,160,179,0.08)';
+    ctx.lineWidth = 1;
+    const stepX = w / 12, stepY = h / 6;
+    for(let x=0; x<=w; x+=stepX){
+      ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,h); ctx.stroke();
+    }
+    for(let y=0; y<=h; y+=stepY){
+      ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(w,y); ctx.stroke();
+    }
+  }
+
+  function wavePath(fn, color, lineWidth, alpha){
+    ctx.beginPath();
+    for(let x=0; x<=w; x++){
+      const xi = x / w;
+      const y = fn(xi);
+      const py = h/2 - y;
+      if(x===0) ctx.moveTo(x, py); else ctx.lineTo(x, py);
+    }
+    ctx.strokeStyle = color;
+    ctx.globalAlpha = alpha;
+    ctx.lineWidth = lineWidth;
+    ctx.shadowColor = color;
+    ctx.shadowBlur = 6;
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+    ctx.globalAlpha = 1;
+  }
+
+  function frame(){
+    ctx.clearRect(0,0,w,h);
+    drawGrid();
+
+    const amp = h * 0.16;
+    const cycles = 3;
+    const phase = reduceMotion ? 0 : t;
+
+    // fundamental
+    const fundamental = (xi) => amp * Math.sin(2*Math.PI*cycles*xi + phase);
+    // 3rd harmonic
+    const h3 = (xi) => (amp*0.4) * Math.sin(2*Math.PI*cycles*3*xi + phase*2.2);
+    // 5th harmonic
+    const h5 = (xi) => (amp*0.22) * Math.sin(2*Math.PI*cycles*5*xi + phase*3.1);
+    // summed
+    const summed = (xi) => fundamental(xi)*0.6 + h3(xi) + h5(xi);
+
+    wavePath(fundamental, '#3B7D6D', 1.5, 0.85);
+    wavePath((xi)=>h3(xi)+ (h*0.0), '#6EE7C4', 1.4, 0.55);
+    wavePath(summed, '#F2A65A', 2, 0.95);
+
+    if(!reduceMotion){
+      t += 0.018;
+      requestAnimationFrame(frame);
+    }
+  }
+  frame();
+})();
+</script>
+
 </body>
 </html>
+
+Reply
